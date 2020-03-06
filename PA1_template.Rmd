@@ -1,24 +1,66 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
+title: 'Reproducible Research: Peer Assessment 1'
+output:
+  pdf_document: default
   html_document:
-    keep_md: true
+    keep_md: yes
 ---
 
 
 ## Loading and preprocessing the data
 
+*The data available in the git repository, so not downloaded again.*
 
+Unzip the data and read the csv file to a variable.
+```{r echo=TRUE}
+unzip("activity.zip")
+
+d <- read.csv("activity.csv")
+```
+
+## Histogram of Total steps per day
+```{r echo=TRUE}
+stepsPerDay <- aggregate(d$steps, by = list(d$date), FUN=sum)
+
+hist(stepsPerDay$x, col="lightblue", breaks = 30, main="Steps per Day", xlab = "Steps", ylab = "Frequency")
+```
 
 ## What is mean total number of steps taken per day?
 
+### Mean
+```{r echo=TRUE}
+mean(stepsPerDay$x, na.rm = TRUE)
+```
 
+### Median
+```{r echo=TRUE}
+median(stepsPerDay$x, na.rm = TRUE)
+```
 
 ## What is the average daily activity pattern?
 
+Subset the steps based on interval
+```{r echo=TRUE}
+stepsByInterval <- aggregate(steps ~ interval, data = d, FUN = mean, na.action = na.omit)
+```
+
+Time series plot of avg steps per day
+```{r echo=TRUE}
+plot(x=stepsByInterval$interval, y=stepsByInterval$steps, type = 'l', xlab = "Interval(5 min)", ylab = "Steps", col="blue", main="Average Steps per Interval")
+```
+
+5 min interval having maximum steps on average
+```{r echo=TRUE}
+stepsByInterval[which.max(stepsByInterval$steps),1]
+```
 
 
 ## Imputing missing values
+
+1. Total no of missing values in steps column of the dataset
+```{r echo=TRUE}
+sum(is.na(d$steps))
+```
 
 
 
